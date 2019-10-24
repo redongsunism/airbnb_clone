@@ -12,8 +12,8 @@ class User(AbstractUser):
 
     GENDER_CHOICES = (
         (GENDER_MALE, "Male"),
-        (GENDER_MALE, "Female"),
-        (GENDER_MALE, "Other")
+        (GENDER_FEMALE, "Female"),
+        (GENDER_OTHER, "Other")
     )
 
     LANGUAGE_ENGLISH = "en"
@@ -32,16 +32,16 @@ class User(AbstractUser):
         (CURRENCY_KRW, "KRW")
     )
 
-    avatar = models.ImageField(null=True, blank=True)
+    avatar = models.ImageField(blank=True)
     gender = models.CharField(
-        choices=GENDER_CHOICES, max_length=10, null=True, blank=True
+        choices=GENDER_CHOICES, max_length=10, blank=True
         )
-    bio = models.TextField(default="", blank=True)
-    birthdate = models.DateField(null=True)
+    bio = models.TextField(blank=True)
+    birthdate = models.DateField(blank=True, null=True)
     language = models.CharField(
-        choices=LANGUAGE_CHOICES, max_length=2, null=True, blank=True
+        choices=LANGUAGE_CHOICES, max_length=2, blank=True
         )
     currency = models.CharField(
-        choices=CURRENCY_CHOICES, max_length=3, null=True, blank=True
+        choices=CURRENCY_CHOICES, max_length=3, blank=True
         )
     superhost = models.BooleanField(default=False)
