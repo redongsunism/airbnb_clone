@@ -1,6 +1,9 @@
-from django.views.generic import ListView, DetailView, View
+from django.http import Http404
+from django.views.generic import ListView, DetailView, View, UpdateView
 from django.shortcuts import render
 from django.core.paginator import Paginator
+from users import mixins as user_mixins
+from banners import models as banner_models
 from . import models, forms
 
 
@@ -14,6 +17,12 @@ class HomeView(ListView):
     ordering = "created"
     context_object_name = "rooms"
 
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        context["banners"] = banner_models.Banner.objects.all()
+
+        return context
+
 
 class RoomDetail(DetailView):
 
@@ -22,9 +31,7 @@ class RoomDetail(DetailView):
     model = models.Room
 
 
-
 class SearchView(View):
-
     def get(self, request):
 
         country = request.GET.get("country")
@@ -93,10 +100,54 @@ class SearchView(View):
 
                 rooms = paginator.get_page(page)
 
-                return render(request, "rooms/search.html", {"form": form, "rooms": rooms})
+                return render(
+                    request, "rooms/search.html", {"form": form, "rooms": rooms}
+                )
 
         else:
             form = forms.SearchForm()
-        
-        
+
         return render(request, "rooms/search.html", {"form": form})
+
+
+class EditRoomView(user_mixins.LoggedInOnlyView, UpdateView):
+
+    model = models.Room
+    template_name = "rooms/room_edit.html"
+    fields = (
+        "name",
+        "description",
+        "country",
+        "city",
+        "price",
+        "address",
+        "guests",
+        "beds",
+        "bedrooms",
+        "baths",
+        "check_in",
+        "check_out",
+        "instant_book",
+        "room_type",
+        "amenities",
+        "facilities",
+        "house_rules",
+    )
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:
+            raise Http404()
+        return room
+
+
+class RoomPhotosView(user_mixins.LoggedInOnlyView, DetailView):
+
+    model = models.Room
+    template_name = "rooms/room_photos.html"
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:
+            raise Http404()
+        return room
