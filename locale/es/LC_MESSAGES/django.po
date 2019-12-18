@@ -37,7 +37,7 @@ msgstr "Página %(current_page)s de %(total_pages)s"
 
 #: .\users\mixins.py:13
 msgid "Can't go there"
-msgstr ""
+msgstr "No puedes ir ahí"
 
 #: .\users\models.py:21
 msgid "Male"
