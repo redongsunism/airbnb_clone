@@ -14,6 +14,7 @@ django-countries = "*"
 django-seed = "*"
 django-dotenv = "*"
 requests = "*"
+django-debug-toolbar = "*"
 
 [requires]
 python_version = "3.7"
